@@ -808,6 +808,48 @@ public class MainActivity extends Activity {
         p.destroy();
         if (!tv && popups.isEmpty()) cursor.setVisibility(View.VISIBLE);
         Log.i(TAG, "popup closed");
+        if (popups.isEmpty()) keepSession();
+    }
+
+    // Apple's sign-in can leave the new session (media-user-token and its companions) only on
+    // authorize.music.apple.com. The site then sees no token, Apple's sign-in service answers 403 and
+    // MusicKit signs out a second later (issue #2). So when the sign-in host has a token and the site
+    // has none at all, those cookies are copied to apple.com and the site reopens: it starts signed in,
+    // and Apple's service then sets them on music.apple.com itself. A site that sees a token is left alone.
+    private static final String[] SESSION = { "media-user-token", "itre", "itspod", "itua", "pldfltcid", "pltvcid" };
+    private static final String SIGNIN_HOST = "https://authorize.music.apple.com/", SITE = "https://music.apple.com/";
+
+    private void keepSession() {
+        CookieManager cm = CookieManager.getInstance();
+        String from = cm.getCookie(SIGNIN_HOST), site = cm.getCookie(SITE);
+        if (cookie(from, SESSION[0]) == null || cookie(site, SESSION[0]) != null) return;
+        ArrayList<String> copied = new ArrayList<>();
+        for (String name : SESSION) {
+            String v = cookie(from, name);
+            if (v == null || cookie(site, name) != null) continue;
+            cm.setCookie(SITE, name + "=" + v + "; Domain=.apple.com; Path=/; Secure; Max-Age=15552000");
+            copied.add(name);
+        }
+        cm.flush();
+        Log.i(TAG, "session cookies copied to apple.com " + copied + ": reopening the site");
+        showSplash(str("status_interface"));
+        pageReady = false;
+        // A line in the page's diagnostics log (names only), then the site again.
+        web.evaluateJavascript("window.__amtv&&__amtv.diag({ev:'session-cookies-copied',names:"
+                + js(TextUtils.join(",", copied)) + "})", r -> web.loadUrl(home()));
+    }
+
+    /** The value of cookie `name` in a Cookie header (CookieManager.getCookie), or null. */
+    private static String cookie(String header, String name) {
+        if (header == null) return null;
+        for (String part : header.split(";")) {
+            int eq = part.indexOf('=');
+            if (eq > 0 && part.substring(0, eq).trim().equals(name)) {
+                String v = part.substring(eq + 1).trim();
+                return v.isEmpty() ? null : v;
+            }
+        }
+        return null;
     }
 
     @Override
