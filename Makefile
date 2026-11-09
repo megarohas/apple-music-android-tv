@@ -31,13 +31,15 @@ ASSETS := $(shell find assets -type f)
 all: $(APK)
 
 # No Gradle: aapt2 → javac → d8 → zipalign → apksigner, a few seconds end to end.
+# javac -parameters: JDK 21 leaves inner classes' mandated parameter unnamed, and d8 from build-tools 34
+# crashes on that (NullPointerException); with names everywhere any d8 is fine.
 $(APK): AndroidManifest.xml $(SRC) $(RES) $(ASSETS)
 	rm -rf $(B) && mkdir -p $(B)/classes
 	$(BT)/aapt2 compile --dir res -o $(B)/res.zip
 	sed $(if $(DEV),'s|android:label="@string/app_name"|android:label="AMTV Dev"|','') AndroidManifest.xml > $(B)/AndroidManifest.xml
 	$(BT)/aapt2 link -I $(PLATFORM) --manifest $(B)/AndroidManifest.xml $(if $(DEV),--rename-manifest-package $(PKG)) \
 		-A assets -o $(B)/app.unsigned.apk $(B)/res.zip
-	javac -source 8 -target 8 -Xlint:-options -encoding UTF-8 -bootclasspath $(PLATFORM):$(BT)/core-lambda-stubs.jar -d $(B)/classes $(SRC)
+	javac -source 8 -target 8 -parameters -Xlint:-options -encoding UTF-8 -bootclasspath $(PLATFORM):$(BT)/core-lambda-stubs.jar -d $(B)/classes $(SRC)
 	$(BT)/d8 --release --min-api 29 --lib $(PLATFORM) --output $(B) $$(find $(B)/classes -name '*.class')
 	cd $(B) && zip -q app.unsigned.apk classes.dex
 	$(BT)/zipalign -f -p 4 $(B)/app.unsigned.apk $(B)/app.aligned.apk
