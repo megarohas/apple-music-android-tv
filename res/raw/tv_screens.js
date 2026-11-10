@@ -383,8 +383,9 @@
     const item = (label, sub, run) => h('div', { class: 'item f row', onok: run }, h('div', 'tx', h('div', 'a', label), sub ? h('div', 'b', sub) : null));
     s.page.append(h('h1', null, T.t('Настройки')), h('div', 'list set',
       item(T.t('Режим сайта'), T.t('Сайт Apple Music с курсором. «Назад» вернёт сюда.'), () => T.site()),
-      item(T.t('Язык') + ': ' + ({ ru: 'Русский', fr: 'Français' }[T.lang] || 'English'), { fr: 'Switch to English', en: 'Переключить на русский' }[T.lang] || 'Passer en français',
-        () => T.setLang({ fr: 'en', en: 'ru' }[T.lang] || 'fr')),
+      // Every language under its own name: the item can be found from any of them, and each is one step away.
+      item(T.t('Язык'), T.LANGS.map((l) => l[1]).join(' · '), () => T.menu(T.t('Язык'), T.LANGS.map(([id, name]) => (
+        { label: name, on: id === T.lang, run: () => { if (id !== T.lang) T.setLang(id); } })))),
       item(T.t('Обновить данные'), T.t('Сбросить кэш подборок и медиатеки'), () => { T.forget(''); T.toast(T.t('Кэш сброшен')); }),
       item(T.t('Выйти из Apple ID'), null, () => T.menu(T.t('Выйти из Apple ID?'), [
         { label: T.t('Отмена'), run: () => {} },

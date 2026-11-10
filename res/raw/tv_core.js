@@ -201,6 +201,7 @@
   try { native.lang && native.lang(lang); } catch (e) {}                 // the splash follows the same choice
   if (!lang) lang = /^ru\b/i.test(navigator.language || '') ? 'ru' : /^fr\b/i.test(navigator.language || '') ? 'fr' : 'en';
   T.lang = lang;
+  T.LANGS = [['en', 'English'], ['fr', 'Français'], ['ru', 'Русский']];   // each under its own name
   T.t = (ru, ...args) => {
     const table = lang === 'fr' ? FR : EN;
     let out = lang === 'ru' ? ru : (table[ru] != null ? table[ru] : (EN[ru] != null ? EN[ru] : ru));
@@ -560,6 +561,8 @@ h2 { font-size: 18px; font-weight: 600; margin: 0 48px 4px; color: #f2f2f5; whit
 .menu .hd { font-size: 13px; color: #999; padding: 10px 12px; border-bottom: 1px solid #2e2e30; margin-bottom: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .menu .mi { padding: 12px 14px; border-radius: 8px; font-size: 15px; }
 .menu .mi.focus { background: #3a3a3c; }
+.menu .mi.on { display: flex; align-items: center; justify-content: space-between; }
+.menu .mi.on::after { content: ''; width: 6px; height: 12px; margin: -3px 6px 0 12px; border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg); }
 `);
 
   // ---------------------------------------------------------------- focus
@@ -854,18 +857,19 @@ h2 { font-size: 18px; font-weight: 600; margin: 0 48px 4px; color: #f2f2f5; whit
   };
 
   let menuReturn = null, menuOpenedAt = 0;
-  // items: [{label, run}] — a held OK opens these; its own release must not pick the first item.
+  // items: [{label, run, on}] — a held OK opens these; its own release must not pick the first item.
+  // In a list of options, `on` is the current one: ticked, and where the focus starts.
   T.menu = function (title, items) {
     menuReturn = cur;
     menuOpenedAt = Date.now();
     layer.replaceChildren(h('div', 'menu', title ? h('div', 'hd', title) : null,
-      items.map((it) => h('div', { class: 'mi f row', onok: () => {
+      items.map((it) => h('div', { class: 'mi f row' + (it.on ? ' on' : ''), onok: () => {
         if (Date.now() - menuOpenedAt < 600) return;
         T.closeMenu();
         it.run();
       } }, it.label))));
     layer.classList.add('on');
-    T.focus(layer.querySelector('.f'));
+    T.focus(layer.querySelector('.f.on') || layer.querySelector('.f'));
   };
   T.closeMenu = function () {
     layer.classList.remove('on');
