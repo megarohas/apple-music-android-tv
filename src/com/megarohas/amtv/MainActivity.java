@@ -674,7 +674,7 @@ public class MainActivity extends Activity {
         /** The interface language picked in Settings ("" = follow the system), for the splash lines. */
         @JavascriptInterface
         public void lang(String l) {
-            if (l != null && l.matches("|en|ru")) getSharedPreferences("amtv", MODE_PRIVATE).edit().putString("lang", l).apply();
+            if (l != null && l.matches("|en|ru|fr")) getSharedPreferences("amtv", MODE_PRIVATE).edit().putString("lang", l).apply();
         }
 
         /**

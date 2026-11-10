@@ -10,7 +10,7 @@
 &nbsp;
 [![License: MIT](https://img.shields.io/badge/license-MIT-333?style=for-the-badge)](LICENSE)
 
-[Русская версия](README.ru.md) · [Install in 5 minutes](#install) · [Remote controls](#using-it-with-the-remote) · [FAQ](#faq) · [How it works](#how-it-works)
+[Русская версия](README.ru.md) · [Version française](README.fr.md) · [Install in 5 minutes](#install) · [Remote controls](#using-it-with-the-remote) · [FAQ](#faq) · [How it works](#how-it-works)
 
 <img src="docs/screenshots/now_controls.jpg" width="820" alt="AMTV Now Playing screen on a TV">
 
@@ -59,7 +59,7 @@ It is free, open source and contains **no hacks**: under the hood it runs **Appl
 - ⭐ **Favorites** — the star in the player (same as ⭐ in Apple Music).
 - 📝 **Lyrics** — word-by-word synced lyrics from Apple Music (switch them on with the lyrics button in the player).
 - 🗣️ **Voice & automation hooks** — start a station or skip tracks from outside the app (see [Automation](#voice-assistants--automation)); works with the open-source voice remote [megarohas_tv_voice](https://github.com/megarohas/megarohas_tv_voice).
-- 🌐 **English and Russian** interface — follows the TV's language, switchable in Settings.
+- 🌐 **English, Russian and French** interface — follows the TV's language, switchable in Settings.
 - 🐢 **Fast on weak TV boxes** — tuned on a Xiaomi TV Box S (4×Cortex-A55, Mali-G31, 2 GB RAM): idle CPU ≈ 0 %, no endless animations, nothing downloaded in the background.
 - 🖱️ **Website mode** — the full Apple Music website with an on-screen pointer, for anything the TV interface doesn't do yet.
 

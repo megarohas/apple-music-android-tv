@@ -383,8 +383,8 @@
     const item = (label, sub, run) => h('div', { class: 'item f row', onok: run }, h('div', 'tx', h('div', 'a', label), sub ? h('div', 'b', sub) : null));
     s.page.append(h('h1', null, T.t('Настройки')), h('div', 'list set',
       item(T.t('Режим сайта'), T.t('Сайт Apple Music с курсором. «Назад» вернёт сюда.'), () => T.site()),
-      item(T.t('Язык') + ': ' + (T.lang === 'ru' ? 'Русский' : 'English'), T.lang === 'ru' ? 'Switch to English' : 'Переключить на русский',
-        () => T.setLang(T.lang === 'ru' ? 'en' : 'ru')),
+      item(T.t('Язык') + ': ' + ({ ru: 'Русский', fr: 'Français' }[T.lang] || 'English'), { fr: 'Switch to English', en: 'Переключить на русский' }[T.lang] || 'Passer en français',
+        () => T.setLang({ fr: 'en', en: 'ru' }[T.lang] || 'fr')),
       item(T.t('Обновить данные'), T.t('Сбросить кэш подборок и медиатеки'), () => { T.forget(''); T.toast(T.t('Кэш сброшен')); }),
       item(T.t('Выйти из Apple ID'), null, () => T.menu(T.t('Выйти из Apple ID?'), [
         { label: T.t('Отмена'), run: () => {} },

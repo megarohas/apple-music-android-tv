@@ -14,6 +14,7 @@
 ## Docs
 - English README: https://github.com/megarohas/apple-music-android-tv/blob/release/README.md
 - Russian README: https://github.com/megarohas/apple-music-android-tv/blob/release/README.ru.md
+- French README: https://github.com/megarohas/apple-music-android-tv/blob/release/README.fr.md
 - Source map: MainActivity.java (WebView, keys, intents), res/raw/tv_core.js (focus engine, API, playback), tv_screens.js (screens), tv_player.js (Now Playing)
 
 ## Related
