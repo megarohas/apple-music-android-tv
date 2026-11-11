@@ -603,16 +603,14 @@
       return move;
     }
 
-    // Burn-in care: the cover, title, artist and clock each float on their own slow path (two sines
-    // per element, periods of a minute or two). Ten sub-pixel steps a second on their own GPU layers
+    // Burn-in care: the cover block (badge, cover, title, artist) and the clock float together, on one
+    // slow path (two sines, periods of a minute or two). Ten sub-pixel steps a second on two GPU layers
     // read as a smooth drift, at the cost of ten composites a second — not a 60 fps animation.
     // (The title's padding leaves room for its shadow: overflow:hidden, needed for the ellipsis, clips.)
-    const FLOAT = [  // element, x and y reach (px), x and y periods (s)
-      [cover, 12, 8, 97, 131], [ti, 6, 3, 71, 89], [ar, 6, 3, 83, 61], [clock, 8, 5, 113, 79],
-    ];
-    const floaters = FLOAT.map(([el, ax, ay, px, py]) => {
+    const FLOAT_X = 12, FLOAT_Y = 8, FLOAT_PX = 97, FLOAT_PY = 131;   // reach (px), periods (s)
+    const floaters = [drift, clock].map((el) => {
       el.classList.add('float');
-      return { mx: mover(el, 'x', ax), my: mover(el, 'y', ay), ax, ay, px, py };
+      return { mx: mover(el, 'x', FLOAT_X), my: mover(el, 'y', FLOAT_Y) };
     });
     const floatFrom = performance.now() - Math.random() * 3600e3;
     let driftTimer = 0;
@@ -620,10 +618,8 @@
       clearTimeout(driftTimer);
       if (s.el.hidden || !s.el.isConnected) return;
       const t = (performance.now() - floatFrom) / 1000;
-      for (const f of floaters) {
-        f.mx(f.ax * Math.sin(2 * Math.PI * t / f.px));
-        f.my(f.ay * Math.sin(2 * Math.PI * t / f.py + 1.3));
-      }
+      const x = FLOAT_X * Math.sin(2 * Math.PI * t / FLOAT_PX), y = FLOAT_Y * Math.sin(2 * Math.PI * t / FLOAT_PY + 1.3);
+      for (const f of floaters) { f.mx(x); f.my(y); }
       paintProgress();
       driftTimer = setTimeout(driftStep, marqStep(performance.now()) ? 50 : 100);
     }
