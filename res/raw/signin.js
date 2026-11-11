@@ -10,6 +10,7 @@
   // The remote hint, in the language picked in Settings (MainActivity passes it in), else the system's.
   const HINTS = {
     en: '↑ ↓  choose   ·   OK  type or press   ·   Back  cancel',
+    de: '↑ ↓  auswählen   ·   OK  eingeben oder drücken   ·   Zurück  abbrechen',
     fr: '↑ ↓  choisir   ·   OK  écrire ou valider   ·   Retour  annuler',
     ru: '↑ ↓  выбрать   ·   OK  ввести или нажать   ·   Назад  отмена',
     zh: '↑ ↓  选择   ·   OK  输入或按下   ·   返回  取消',

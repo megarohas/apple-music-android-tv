@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="status_starting">Wird gestartet …</string>
+    <string name="status_opening">Apple Music wird geöffnet …</string>
+    <string name="status_interface">Oberfläche wird geladen …</string>
+    <string name="status_region">Apple Music für dein Land wird geöffnet …</string>
+    <string name="status_play">Musik wird gestartet …</string>
+    <string name="error_open">%1$s konnte nicht geöffnet werden</string>
+    <string name="error_retry">Drücke OK, um es erneut zu versuchen</string>
+</resources>
