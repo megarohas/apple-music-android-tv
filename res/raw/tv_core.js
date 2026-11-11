@@ -2,8 +2,8 @@
 //   __tv.key('up'|'down'|'left'|'right'|'ok'|'hold'|'back') → true when handled.
 // Data comes from the page's own signed-in MusicKit session (MusicKit.getInstance().api.music),
 // playback goes through the official player. Nothing here touches streams or tokens.
-// Files: tv_core.js (this: shell, focus, navigation, API), tv_screens.js, tv_player.js.
-// Re-running them replaces the old interface: `node tools/cdp.mjs run res/raw/tv_*.js`.
+// Files: tv_i18n.js (translations), tv_core.js (this: shell, focus, navigation, API), tv_screens.js, tv_player.js.
+// Re-running them replaces the old interface: `node tools/cdp.mjs run res/raw/tv_i18n.js res/raw/tv_core.js res/raw/tv_screens.js res/raw/tv_player.js`.
 (function () {
   'use strict';
   if (window.__tv) try { window.__tv.destroy(); } catch (e) { console.log('amtv destroy', e); }
@@ -12,199 +12,25 @@
   const T = window.__tv = { screens: {}, native };
   const listeners = [];
 
-  // Interface language: the system's (Russian, or else English); Settings can override it.
-  // Strings are written in Russian in the code and looked up here for English.
-  const EN = {
-"Сейчас играет": "Now Playing",
-"Главная": "Home",
-"Обзор": "Browse",
-"Радио": "Radio",
-"Медиатека": "Library",
-"Поиск": "Search",
-"Не удалось загрузить. ": "Couldn’t load. ",
-"Повторить": "Try again",
-"Станция": "Station",
-"Это пока не открывается: ": "This can’t be opened yet: ",
-"Не умею играть ": "Can’t play ",
-"Не получилось включить: ": "Couldn’t start playback: ",
-"Добавлено в конец очереди": "Added to the end of the queue",
-"Сыграет следующим": "Will play next",
-"Не получилось: ": "That didn’t work: ",
-"Слушать": "Play",
-"Перемешать": "Shuffle",
-"Сыграть следующим": "Play Next",
-"В конец очереди": "Play Last",
-"Добавить в медиатеку": "Add to Library",
-"Станция по песне": "Create Station",
-"Добавлено в медиатеку": "Added to your library",
-"Не получилось добавить: ": "Couldn’t add: ",
-"Загружаю «%s»…": "Loading “%s”…",
-"Буферизую звук…": "Buffering…",
-"Пробую ещё раз…": "Trying again…",
-"Включаю станцию…": "Starting the station…",
-"Получаю треки станции…": "Getting the station’s tracks…",
-"Получаю треки…": "Getting the tracks…",
-"Не получилось включить": "Couldn’t start playback",
-"Нечего добавить в избранное": "Nothing to add to Favorites",
-"Добавлено в избранное: ": "Added to Favorites: ",
-"Убрано из избранного: ": "Removed from Favorites: ",
-"Проверяю вход в Apple ID…": "Checking your Apple ID sign-in…",
-"Собираю главную…": "Building Home…",
-"Нужен вход в Apple ID": "Sign-in needed",
-"Вы вошли в Apple Music": "Signed in to Apple Music",
-"Вход в Apple Music слетел — войдите снова": "You were signed out of Apple Music — please sign in again",
-"Откроется вход Apple: ↑ ↓ — выбрать поле или кнопку, OK — ввести или нажать.": "Apple’s sign-in opens: ↑ ↓ choose a field or button, OK to type or press.",
-"Войти": "Sign In",
-"Ещё": "More",
-"Здесь пока пусто": "Nothing here yet",
-"Лучшее для вас": "Top Picks for You",
-"Недавно добавленные": "Recently Added",
-"Плейлисты": "Playlists",
-"Альбомы": "Albums",
-"Артисты": "Artists",
-"Песни": "Songs",
-"Пусто": "Empty",
-"Не удалось загрузить: ": "Couldn’t load: ",
-"Артисты, альбомы, песни…": "Artists, albums, songs…",
-"Поиск — нажмите OK, чтобы ввести": "Search — press OK to type",
-"Недавние": "Recent",
-"Удалено из истории": "Removed from history",
-"Удерживайте OK на чём угодно — появится меню.": "Hold OK on anything for more options.",
-"Станции": "Stations",
-"Ничего не нашлось": "No results",
-"Поиск не удался: ": "Search failed: ",
-"Настройки": "Settings",
-"Режим сайта": "Website mode",
-"Сайт Apple Music с курсором. «Назад» вернёт сюда.": "The Apple Music website with a pointer. Back returns here.",
-"Обновить данные": "Refresh data",
-"Сбросить кэш подборок и медиатеки": "Clear the cached shelves and library",
-"Кэш сброшен": "Cache cleared",
-"Выйти из Apple ID": "Sign out of Apple ID",
-"Выйти из Apple ID?": "Sign out of your Apple ID?",
-"Отмена": "Cancel",
-"Выйти": "Sign Out",
-"Регион: ": "Region: ",
-" · Apple Music в браузере, интерфейс для пульта.": " · Apple Music on the web with a remote-friendly interface.",
-" песен": " songs",
-"Об артисте: ": "About ",
-"Популярное": "Top Songs",
-"Популярные песни": "Top Songs",
-"Последний релиз": "Latest Release",
-"Синглы и EP": "Singles & EPs",
-"Похожие артисты": "Similar Artists",
-"Перемешивание включено": "Shuffle on",
-"Перемешивание выключено": "Shuffle off",
-"Добавлено в избранное": "Added to Favorites",
-"Убрано из избранного": "Removed from Favorites",
-"Повтор выключен": "Repeat off",
-"Повтор песни": "Repeat one",
-"Повтор всего": "Repeat all",
-"Сейчас ничего не играет": "Nothing is playing",
-"Далее": "Up Next",
-"Язык": "Language",
-"Русский": "Русский",
-"English": "English"
-};
-  const FR = {
-"Сейчас играет": "Lecture en cours",
-"Главная": "Accueil",
-"Обзор": "Explorer",
-"Радио": "Radio",
-"Медиатека": "Bibliothèque",
-"Поиск": "Rechercher",
-"Не удалось загрузить. ": "Échec du chargement. ",
-"Повторить": "Réessayer",
-"Станция": "Station",
-"Это пока не открывается: ": "Impossible d’ouvrir ceci pour l’instant : ",
-"Не умею играть ": "Lecture impossible : ",
-"Не получилось включить: ": "Impossible de lancer la lecture : ",
-"Добавлено в конец очереди": "Ajouté à la fin de la file",
-"Сыграет следующим": "Sera lu ensuite",
-"Не получилось: ": "Ça n’a pas marché : ",
-"Слушать": "Lire",
-"Перемешать": "Aléatoire",
-"Сыграть следующим": "Lire ensuite",
-"В конец очереди": "Lire en dernier",
-"Добавить в медиатеку": "Ajouter à la bibliothèque",
-"Станция по песне": "Créer une station",
-"Добавлено в медиатеку": "Ajouté à votre bibliothèque",
-"Не получилось добавить: ": "Ajout impossible : ",
-"Загружаю «%s»…": "Chargement de « %s »…",
-"Буферизую звук…": "Mise en mémoire tampon…",
-"Пробую ещё раз…": "Nouvel essai…",
-"Включаю станцию…": "Lancement de la station…",
-"Получаю треки станции…": "Récupération des morceaux de la station…",
-"Получаю треки…": "Récupération des morceaux…",
-"Не получилось включить": "Impossible de lancer la lecture",
-"Нечего добавить в избранное": "Rien à ajouter aux favoris",
-"Добавлено в избранное: ": "Ajouté aux favoris : ",
-"Убрано из избранного: ": "Retiré des favoris : ",
-"Проверяю вход в Apple ID…": "Vérification de la connexion Apple ID…",
-"Собираю главную…": "Préparation de l’accueil…",
-"Нужен вход в Apple ID": "Connexion nécessaire",
-"Вы вошли в Apple Music": "Connecté à Apple Music",
-"Вход в Apple Music слетел — войдите снова": "Vous avez été déconnecté d’Apple Music — reconnectez-vous",
-"Откроется вход Apple: ↑ ↓ — выбрать поле или кнопку, OK — ввести или нажать.": "La connexion Apple s’ouvre : ↑ ↓ pour choisir un champ ou un bouton, OK pour écrire ou valider.",
-"Войти": "Se connecter",
-"Ещё": "Plus",
-"Здесь пока пусто": "Rien pour l’instant",
-"Лучшее для вас": "Sélection pour vous",
-"Недавно добавленные": "Ajouts récents",
-"Плейлисты": "Playlists",
-"Альбомы": "Albums",
-"Артисты": "Artistes",
-"Песни": "Morceaux",
-"Пусто": "Vide",
-"Не удалось загрузить: ": "Échec du chargement : ",
-"Артисты, альбомы, песни…": "Artistes, albums, morceaux…",
-"Поиск — нажмите OK, чтобы ввести": "Rechercher — appuyez sur OK pour écrire",
-"Недавние": "Récents",
-"Удалено из истории": "Retiré de l’historique",
-"Удерживайте OK на чём угодно — появится меню.": "Maintenez OK sur un élément pour plus d’options.",
-"Станции": "Stations",
-"Ничего не нашлось": "Aucun résultat",
-"Поиск не удался: ": "Échec de la recherche : ",
-"Настройки": "Réglages",
-"Режим сайта": "Mode site web",
-"Сайт Apple Music с курсором. «Назад» вернёт сюда.": "Le site Apple Music avec un pointeur. Retour revient ici.",
-"Обновить данные": "Actualiser les données",
-"Сбросить кэш подборок и медиатеки": "Vider le cache des sélections et de la bibliothèque",
-"Кэш сброшен": "Cache vidé",
-"Выйти из Apple ID": "Se déconnecter de l’Apple ID",
-"Выйти из Apple ID?": "Se déconnecter de l’Apple ID ?",
-"Отмена": "Annuler",
-"Выйти": "Se déconnecter",
-"Регион: ": "Région : ",
-" · Apple Music в браузере, интерфейс для пульта.": " · Apple Music sur le web, avec une interface pour la télécommande.",
-" песен": " morceaux",
-"Об артисте: ": "À propos de ",
-"Популярное": "Meilleurs morceaux",
-"Популярные песни": "Meilleurs morceaux",
-"Последний релиз": "Dernière sortie",
-"Синглы и EP": "Singles et EP",
-"Похожие артисты": "Artistes similaires",
-"Перемешивание включено": "Aléatoire activé",
-"Перемешивание выключено": "Aléatoire désactivé",
-"Добавлено в избранное": "Ajouté aux favoris",
-"Убрано из избранного": "Retiré des favoris",
-"Повтор выключен": "Répétition désactivée",
-"Повтор песни": "Répéter le morceau",
-"Повтор всего": "Tout répéter",
-"Сейчас ничего не играет": "Rien en cours de lecture",
-"Далее": "À suivre",
-"Язык": "Langue",
-"Русский": "Русский",
-"English": "English"
-};
-  let lang = 'en';
+  // Interface language: the one picked in Settings, else the system's when there is a table for it,
+  // else English. Strings are written in Russian in the code; tv_i18n.js maps them to each language.
+  const I18N = window.__amtvI18n || { LANGS: [['en', 'English'], ['ru', 'Русский']], en: {} };
+  const known = (l) => l === 'ru' || !!I18N[l];
+  function systemLang() {
+    const nl = String(navigator.language || '').toLowerCase(), l = nl.split(/[-_]/)[0];
+    if (l === 'zh') return !/hant|-tw|-hk|-mo/.test(nl) && known('zh') ? 'zh' : 'en';   // Simplified only
+    return known(l) ? l : 'en';
+  }
+  let lang = '';
   try { lang = localStorage.getItem('amtv.lang') || ''; } catch (e) {}
+  if (!known(lang)) lang = '';
   try { native.lang && native.lang(lang); } catch (e) {}                 // the splash follows the same choice
-  if (!lang) lang = /^ru\b/i.test(navigator.language || '') ? 'ru' : /^fr\b/i.test(navigator.language || '') ? 'fr' : 'en';
+  if (!lang) lang = systemLang();
   T.lang = lang;
-  T.LANGS = [['en', 'English'], ['fr', 'Français'], ['ru', 'Русский']];   // each under its own name
+  T.LANGS = I18N.LANGS.filter(([id]) => known(id));                    // each under its own name
   T.t = (ru, ...args) => {
-    const table = lang === 'fr' ? FR : EN;
-    let out = lang === 'ru' ? ru : (table[ru] != null ? table[ru] : (EN[ru] != null ? EN[ru] : ru));
+    const table = I18N[lang] || {}, en = I18N.en || {};
+    let out = lang === 'ru' ? ru : (table[ru] != null ? table[ru] : (en[ru] != null ? en[ru] : ru));
     for (const a of args) out = out.replace('%s', a);
     return out;
   };

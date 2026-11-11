@@ -119,7 +119,7 @@ public class MainActivity extends Activity {
         // Once per document: the site's own router (pushState) also fires onPageFinished, and
         // re-running the scripts would tear the interface down and build it again.
         signinJs = raw("signin");
-        pageJs = "window.__amtvVersion=" + js(versionName()) + ";\nif(!window.__amtvLoaded){window.__amtvLoaded=true;\n" + raw("page") + "\n" + raw("brand") + "\n" + raw("tv_core")
+        pageJs = "window.__amtvVersion=" + js(versionName()) + ";\nif(!window.__amtvLoaded){window.__amtvLoaded=true;\n" + raw("page") + "\n" + raw("brand") + "\n" + raw("tv_i18n") + "\n" + raw("tv_core")
                 + "\n" + raw("tv_screens") + "\n" + raw("tv_player") + "\nwindow.__tv&&__tv.boot();\n}";
         web.loadUrl(home());
         playFrom(getIntent());
@@ -312,7 +312,7 @@ public class MainActivity extends Activity {
         String l = getSharedPreferences("amtv", MODE_PRIVATE).getString("lang", "");
         if (l.isEmpty()) return getResources();
         android.content.res.Configuration c = new android.content.res.Configuration(getResources().getConfiguration());
-        c.setLocale(new java.util.Locale(l));
+        c.setLocale(java.util.Locale.forLanguageTag("zh".equals(l) ? "zh-Hans" : l));   // values-b+zh+Hans
         return createConfigurationContext(c).getResources();
     }
 
@@ -535,7 +535,9 @@ public class MainActivity extends Activity {
             if (v != web) {
                 // Apple's sign-in popup: arrows and OK instead of the pointer.
                 if (signinPage(url) && !signinJs.isEmpty()) {
-                    v.evaluateJavascript(signinJs, null);
+                    // The hint speaks the language picked in Settings ("" = the system's).
+                    String lang = getSharedPreferences("amtv", MODE_PRIVATE).getString("lang", "");
+                    v.evaluateJavascript("window.__amtvLang=" + js(lang) + ";\n" + signinJs, null);
                     cursor.setVisibility(View.INVISIBLE);
                 }
                 return;
@@ -674,7 +676,7 @@ public class MainActivity extends Activity {
         /** The interface language picked in Settings ("" = follow the system), for the splash lines. */
         @JavascriptInterface
         public void lang(String l) {
-            if (l != null && l.matches("|en|ru|fr")) getSharedPreferences("amtv", MODE_PRIVATE).edit().putString("lang", l).apply();
+            if (l != null && l.matches("|[a-z]{2}")) getSharedPreferences("amtv", MODE_PRIVATE).edit().putString("lang", l).apply();
         }
 
         /**

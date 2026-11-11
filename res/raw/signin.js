@@ -7,7 +7,17 @@
 (function () {
   if (window.__amtvSignin) return;
   const S = window.__amtvSignin = {};
-  const ru = /^ru\b/i.test(navigator.language || ''), fr = /^fr\b/i.test(navigator.language || '');
+  // The remote hint, in the language picked in Settings (MainActivity passes it in), else the system's.
+  const HINTS = {
+    en: '↑ ↓  choose   ·   OK  type or press   ·   Back  cancel',
+    fr: '↑ ↓  choisir   ·   OK  écrire ou valider   ·   Retour  annuler',
+    ru: '↑ ↓  выбрать   ·   OK  ввести или нажать   ·   Назад  отмена',
+  };
+  const lang = (() => {
+    const nl = String(window.__amtvLang || navigator.language || '').toLowerCase(), l = nl.split(/[-_]/)[0];
+    if (l === 'zh' && /hant|-tw|-hk|-mo/.test(nl)) return 'en';                // Simplified only
+    return HINTS[l] ? l : 'en';
+  })();
 
   const CSS = `
     .amtv-focus { outline: 4px solid #fa233b !important; outline-offset: 4px !important; border-radius: 12px !important; }
@@ -32,9 +42,7 @@
     if (!document.body || document.getElementById('amtv-signin-hint')) return;
     const b = document.createElement('div');
     b.id = 'amtv-signin-hint';
-    b.textContent = ru ? '↑ ↓  выбрать   ·   OK  ввести или нажать   ·   Назад  отмена'
-      : fr ? '↑ ↓  choisir   ·   OK  écrire ou valider   ·   Retour  annuler'
-      : '↑ ↓  choose   ·   OK  type or press   ·   Back  cancel';
+    b.textContent = HINTS[lang];
     b.style.cssText = 'position:fixed;left:0;right:0;bottom:0;padding:14px 0;text-align:center;z-index:2147483647;'
       + 'font:17px -apple-system,Roboto,sans-serif;color:#444;background:rgba(245,245,247,.96);border-top:1px solid #ddd';
     document.body.appendChild(b);
