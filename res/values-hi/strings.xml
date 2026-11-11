@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="status_starting">शुरू हो रहा है…</string>
+    <string name="status_opening">Apple Music खुल रहा है…</string>
+    <string name="status_interface">इंटरफ़ेस लोड हो रहा है…</string>
+    <string name="status_region">आपके देश का Apple Music खुल रहा है…</string>
+    <string name="status_play">संगीत शुरू हो रहा है…</string>
+    <string name="error_open">%1$s नहीं खुल सका</string>
+    <string name="error_retry">फिर से कोशिश करने के लिए OK दबाएँ</string>
+</resources>
