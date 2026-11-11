@@ -12,6 +12,7 @@
     en: '↑ ↓  choose   ·   OK  type or press   ·   Back  cancel',
     de: '↑ ↓  auswählen   ·   OK  eingeben oder drücken   ·   Zurück  abbrechen',
     fr: '↑ ↓  choisir   ·   OK  écrire ou valider   ·   Retour  annuler',
+    pt: '↑ ↓  escolher   ·   OK  digitar ou pressionar   ·   Voltar  cancelar',
     ru: '↑ ↓  выбрать   ·   OK  ввести или нажать   ·   Назад  отмена',
     zh: '↑ ↓  选择   ·   OK  输入或按下   ·   返回  取消',
   };
