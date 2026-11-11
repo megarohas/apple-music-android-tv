@@ -225,8 +225,7 @@
         // trust the target until it arrives (or 6 s pass), or the next press counts from the old spot.
         seekingTo = t;
         seekUntil = performance.now() + 6000;
-        anchorPos = t * 1000;
-        anchorWall = performance.now();
+        jump(t * 1000);
         mk.seekToTime(t);
         progress();
       }, 600);
@@ -302,24 +301,46 @@
     }
 
     // ---- playback clock: anchored to the player, interpolated between its updates
+    // MusicKit rounds currentPlaybackTime to whole seconds (its default timing mode): anchoring on it
+    // pulled the bar and the time back by up to half a second every few seconds. The player under it
+    // keeps the exact time, so that is read instead. Should it be missing (another MusicKit build), the
+    // clock re-anchors only when the rounded second turns over: the true time is then just past the half.
     let anchorPos = 0, anchorWall = 0;
     const playing = () => mk.playbackState === 2;
     const pos = () => anchorPos + (playing() ? performance.now() - anchorWall : 0);
-    function anchor() { anchorPos = (mk.currentPlaybackTime || 0) * 1000; anchorWall = performance.now(); }
+    function exactTime() {
+      try {
+        const mip = mk._mediaItemPlayback, p = mip && (mip._currentPlayer || (mip.getCurrentPlayer && mip.getCurrentPlayer()));
+        const t = p && p._currentTime;
+        if (typeof t === 'number' && isFinite(t) && Math.abs(t - (mk.currentPlaybackTime || 0)) <= 0.75) return t;
+      } catch (e) {}
+      return null;
+    }
+    const playerTime = () => { const t = exactTime(); return t != null ? t : mk.currentPlaybackTime || 0; };
+    function anchor(ms) { anchorPos = ms != null ? ms : playerTime() * 1000; anchorWall = performance.now(); }
+    // A seek or another song: the clock moves there and the screen follows, backwards included.
+    function jump(ms) { anchor(ms); shownPos = -1; }
 
     // Progress: the bar and the time are painted by the shared tick (see driftStep), only while the
     // controls are on screen and only when the fill moved a quarter pixel or more. A CSS transition
     // across the whole song kept the page restyling 60 times a second, hidden controls included.
-    let lastFill = -1;
+    // What the bar and the time show never steps back by a correction: it waits for the clock instead.
+    let lastFill = -1, shownPos = -1;
+    function shown() {
+      const p = pos();
+      if (seekingTo == null && shownPos >= 0 && p < shownPos && shownPos - p < 1500) return shownPos;
+      shownPos = p;
+      return p;
+    }
     function paintProgress() {
       if (scrubTo != null || idle()) return;
-      const dur = (mk.currentPlaybackDuration || 0) * 1000;
-      const f = dur ? Math.min(1, pos() / dur) : 0;
+      const dur = (mk.currentPlaybackDuration || 0) * 1000, at = shown();
+      const f = dur ? Math.min(1, at / dur) : 0;
       if (Math.abs(f - lastFill) * 320 >= 0.25) {
         lastFill = f;
         fill.style.transform = 'scaleX(' + f.toFixed(4) + ')';
       }
-      const now = T.dur(pos());
+      const now = T.dur(at);
       if (tNow.textContent !== now) tNow.textContent = now;
     }
     function progress() {
@@ -541,20 +562,28 @@
       bRepeat.classList.toggle('on', !!mk.repeatMode);
     }
 
-    let lastAnchor = 0;
-    T.on('nowPlayingItemDidChange', () => { anchor(); onItem(); progress(); }, s);
+    let lastAnchor = 0, lastSecond = -1;
+    T.on('nowPlayingItemDidChange', () => { jump(); lastSecond = -1; onItem(); progress(); }, s);
     T.on('playbackStateDidChange', () => { if (seekingTo == null) anchor(); sync(); progress(); tick(); }, s);
     T.on('playbackTimeDidChange', () => {
       if (seekingTo != null) {
-        if (Math.abs((mk.currentPlaybackTime || 0) - seekingTo) < 2 || performance.now() > seekUntil) seekingTo = null;
+        if (Math.abs(playerTime() - seekingTo) < 2 || performance.now() > seekUntil) seekingTo = null;
         else return;
       }
-      // Re-anchor only on drift or seeks: the interpolated clock is smoother than the event.
-      const drift = Math.abs(pos() - (mk.currentPlaybackTime || 0) * 1000);
-      if (drift > 350 || performance.now() - lastAnchor > 5000) {
-        anchor();
+      // Re-anchor only when the clock is off (or every 5 s): the interpolated clock is smoother.
+      let at = exactTime(), near = 120;
+      if (at == null) {
+        const r = mk.currentPlaybackTime || 0, turned = r === lastSecond + 1;
+        if (r === lastSecond) return;
+        lastSecond = r;
+        at = turned ? r - 0.375 : r;                          // timeupdate comes every 250 ms: mid-window
+        near = turned ? 200 : 650;
+      }
+      const off = Math.abs(pos() - at * 1000);
+      if (off > near || performance.now() - lastAnchor > 5000) {
+        anchor(at * 1000);
         lastAnchor = performance.now();
-        if (drift > 1000) { progress(); if (lines) { active = -1; lines.forEach((l) => l.words.forEach((w) => { w.state = null; })); } tick(); }
+        if (off > 1000) { shownPos = -1; progress(); if (lines) { active = -1; lines.forEach((l) => l.words.forEach((w) => { w.state = null; })); } tick(); }
       }
     }, s);
     T.on('queueItemsDidChange', () => { if (!lines) upNext(); }, s);
