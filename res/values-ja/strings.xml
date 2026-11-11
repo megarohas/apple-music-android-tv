@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="status_starting">起動中…</string>
+    <string name="status_opening">Apple Musicを開いています…</string>
+    <string name="status_interface">画面を読み込み中…</string>
+    <string name="status_region">お住まいの国のApple Musicを開いています…</string>
+    <string name="status_play">再生を開始しています…</string>
+    <string name="error_open">「%1$s」を開けませんでした</string>
+    <string name="error_retry">OKを押して再試行</string>
+</resources>

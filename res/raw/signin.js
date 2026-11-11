@@ -15,6 +15,7 @@
     fr: '↑ ↓  choisir   ·   OK  écrire ou valider   ·   Retour  annuler',
     pt: '↑ ↓  escolher   ·   OK  digitar ou pressionar   ·   Voltar  cancelar',
     ru: '↑ ↓  выбрать   ·   OK  ввести или нажать   ·   Назад  отмена',
+    ja: '↑ ↓  選択   ·   OK  入力または決定   ·   戻る  キャンセル',
     zh: '↑ ↓  选择   ·   OK  输入或按下   ·   返回  取消',
   };
   const lang = (() => {
