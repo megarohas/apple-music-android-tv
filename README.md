@@ -10,7 +10,9 @@
 &nbsp;
 [![License: MIT](https://img.shields.io/badge/license-MIT-333?style=for-the-badge)](LICENSE)
 
-[Русская версия](README.ru.md) · [Version française](README.fr.md) · [Install in 5 minutes](#install) · [Remote controls](#using-it-with-the-remote) · [FAQ](#faq) · [How it works](#how-it-works)
+**English** · [Deutsch](README.de.md) · [Español](README.es.md) · [Français](README.fr.md) · [Português](README.pt-BR.md) · [Русский](README.ru.md) · [हिन्दी](README.hi.md) · [日本語](README.ja.md) · [简体中文](README.zh-CN.md)
+
+[Install in 5 minutes](#install) · [Remote controls](#using-it-with-the-remote) · [FAQ](#faq) · [How it works](#how-it-works)
 
 <img src="docs/screenshots/now_controls.jpg" width="820" alt="AMTV Now Playing screen on a TV">
 
@@ -55,11 +57,11 @@ It is free, open source and contains **no hacks**: under the hood it runs **Appl
 - 📚 **Library** — recently added, playlists, albums, artists, songs.
 - 🔍 **Search** — artists, songs, albums, playlists and stations, with search history.
 - 💿 **Album, playlist and artist pages** — Play, Shuffle, Add to Library; popular tracks are marked like in Apple Music.
-- 🎵 **Now Playing** — big cover, smooth track changes, background tinted by the artwork; controls hide by themselves, **←/→ skip tracks** while they are hidden, scrubbing with a smooth knob. Long titles scroll; the cover, title, artist and clock slowly float, each on its own path, so nothing stays burned into the screen. The TV's screensaver stays away while music plays.
+- 🎵 **Now Playing** — big cover, smooth track changes, background tinted by the artwork; controls hide by themselves, **←/→ skip tracks** while they are hidden, scrubbing with a smooth knob. Long titles scroll; the cover, title, artist and clock slowly float together, so nothing stays burned into the screen. The TV's screensaver stays away while music plays, and the bars on the Now Playing tab move while it does.
 - ⭐ **Favorites** — the star in the player (same as ⭐ in Apple Music).
 - 📝 **Lyrics** — word-by-word synced lyrics from Apple Music (switch them on with the lyrics button in the player).
 - 🗣️ **Voice & automation hooks** — start a station or skip tracks from outside the app (see [Automation](#voice-assistants--automation)); works with the open-source voice remote [megarohas_tv_voice](https://github.com/megarohas/megarohas_tv_voice).
-- 🌐 **English, Russian and French** interface — follows the TV's language, switchable in Settings.
+- 🌐 **Nine interface languages** — English, Deutsch, Español, Français, Português, Русский, हिन्दी, 日本語 and 简体中文. It follows the TV's language; Settings → Language lists them all, each under its own name.
 - 🐢 **Fast on weak TV boxes** — tuned on a Xiaomi TV Box S (4×Cortex-A55, Mali-G31, 2 GB RAM): idle CPU ≈ 0 %, no endless animations, nothing downloaded in the background.
 - 🖱️ **Website mode** — the full Apple Music website with an on-screen pointer, for anything the TV interface doesn't do yet.
 
@@ -156,7 +158,7 @@ AMTV does **not** circumvent DRM or extract tokens. Music plays through Apple's 
 
 <details><summary><b>Will it work on my TV box / Fire TV?</b></summary>
 
-It is tested on a **Xiaomi TV Box S (2nd gen), Google TV, Android 14**. It should work on any Android TV / Google TV device with Android 10+ and Widevine (that's practically all certified devices: Chromecast with Google TV, NVIDIA Shield, Mi Box, Onn, TVs with Google TV). Fire TV is untested — reports are welcome.
+It is tested on a **Xiaomi TV Box S (2nd gen), Google TV, Android 14**. It should work on any Android TV / Google TV device with Android 10+ and Widevine (that's practically all certified devices: Chromecast with Google TV, NVIDIA Shield, Mi Box, Onn, TVs with Google TV). People have also reported it working on a Changhong TV (Android 11) and a Sony Bravia (Android TV 12). Fire TV is untested — reports are welcome.
 </details>
 
 <details><summary><b>Lossless, Dolby Atmos, music videos?</b></summary>
@@ -206,7 +208,8 @@ Apple Music shows the catalog of your Apple ID's country. Before you sign in, th
 
 - **No DRM tricks, no token extraction.** The interface asks Apple's API through the page's own signed-in MusicKit session and starts playback with MusicKit, like the website does.
 - **Apple's own page stays loaded but hidden** (`display: none`) — it owns the player. AMTV keeps it on a page without animated artwork and refuses the requests it would make only for itself (motion-artwork video, its own thumbnails, analytics): on a slow box this was the difference between a 20 s and a 4 s station start.
-- **Built for weak GPUs** — no blur filters or endless animations; the Now Playing background is a 64×36 blurred canvas painted once per song and stretched; lyrics advance on timers aimed at the next word, not a per-frame loop; the floating, the scrolling caption and the progress bar share one 10-per-second tick and move through paused animations, so a step never makes the page re-layer; Apple's hidden page is kept from animating at all.
+- **Built for weak GPUs** — no blur filters or endless animations; the Now Playing background is a 64×36 blurred canvas painted once per song and stretched; lyrics advance on timers aimed at the next word, not a per-frame loop; the floating, the scrolling caption and the progress bar share one 10-per-second tick and move through paused animations, so a step never makes the page re-layer; the bars on the Now Playing tab step a few times a second, only while music plays and the top bar is on screen, and rest after a minute without a key press; Apple's hidden page is kept from animating at all.
+- **Exact play time** — MusicKit reports the time in whole seconds; the progress bar and the clock follow the player's exact time, so they never step back.
 - **Remote navigation** — a small focus engine: rows of focusable items, row memory, shelves that slide with `transform`, edge-to-tab switching, and a mouse pointer for the website mode.
 
 Code map:
@@ -216,10 +219,12 @@ Code map:
 | `src/com/megarohas/amtv/MainActivity.java` | WebView, splash, remote key routing, intents, request filter |
 | `src/com/megarohas/amtv/Cursor.java` | the on-screen pointer for website mode |
 | `res/raw/page.js` | small fixes injected into Apple's page |
-| `res/raw/tv_core.js` | the TV interface: focus engine, tabs, API helpers, playback, i18n |
+| `res/raw/tv_i18n.js` | the interface's translations: one table per language, keyed by the Russian originals |
+| `res/raw/tv_core.js` | the TV interface: focus engine, tabs, API helpers, playback |
 | `res/raw/tv_screens.js` | Home, Browse, Radio, Library, Search, Settings, album / playlist / artist |
 | `res/raw/tv_player.js` | Now Playing: background, lyrics, scrubbing, favorites |
 | `res/raw/signin.js` | Apple's sign-in page adapted for the remote: focus ring, arrows, OK opens the keyboard (presentation only, it never reads what you type) |
+| `res/values*/strings.xml` | the start screen's lines in each language |
 | `res/raw/brand.js` | branding knobs (icons, font) — the one file a custom build swaps |
 | `tools/cdp.mjs` | Chrome DevTools helper: inspect and hot-reload the interface on a real TV |
 
@@ -227,7 +232,7 @@ Code map:
 
 No Gradle — the Makefile calls the Android SDK tools directly; a build takes a few seconds.
 
-Requirements: **Android SDK** (build-tools 36.0.0, platform `android-36`), **JDK 17**, `make`, `adb`.
+Requirements: **Android SDK** (build-tools 36.0.0, platform `android-36`), **JDK 17 or newer**, `make`, `adb`.
 
 ```bash
 git clone https://github.com/megarohas/apple-music-android-tv.git
@@ -245,17 +250,27 @@ Develop on a real TV without reinstalling:
 
 ```bash
 make devtools                                  # forwards the WebView's DevTools to localhost:9222
-node tools/cdp.mjs run res/raw/tv_core.js res/raw/tv_screens.js res/raw/tv_player.js
+node tools/cdp.mjs run res/raw/tv_i18n.js res/raw/tv_core.js res/raw/tv_screens.js res/raw/tv_player.js
 node tools/cdp.mjs eval '__tv.boot()'          # hot-reloaded interface
 node tools/cdp.mjs shot screen.png             # or inspect in chrome://inspect
 ```
 
 Custom branding (your own icons and font) goes into `res/raw/brand.js` plus `assets/fonts/` — see the comments in that file.
 
+### Adding a language
+
+1. `res/raw/tv_i18n.js` — copy the English table, translate the values and add the language to `LANGS` (its code and its own name).
+2. `res/values-<code>/strings.xml` — the seven lines of the start screen.
+3. `res/raw/signin.js` — the one-line remote hint on Apple's sign-in page.
+4. Optionally `README.<code>.md`, linked from the language line at the top of every README.
+
+Keep the strings about as long as the English ones: the top bar and the player have little room. Then `make`, and look at every tab on a TV.
+
 ## Credits
 
 - [**JObersi10/apple-music-tv**](https://github.com/JObersi10/apple-music-tv) — a native Android TV Apple Music client whose research on Apple's web API (endpoints for Home, Browse, Radio, lyrics, favorites) and TV UX ideas helped a lot. No code was copied. That project decrypts streams itself; AMTV deliberately doesn't and lets Apple's player do the playback.
 - [**Material Icons**](https://github.com/google/material-design-icons) (Apache License 2.0) — the base of AMTV's icon set. See [NOTICE](NOTICE).
+- **Translations** — French by [NeoNathoon](https://github.com/NeoNathoon). The other languages have not been checked by native speakers yet: corrections are welcome as pull requests.
 - **Apple MusicKit on the Web** — Apple's player and API that AMTV talks to.
 
 ## Legal

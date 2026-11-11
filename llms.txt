@@ -1,6 +1,6 @@
 # AMTV — Apple Music for Android TV & Google TV
 
-> Unofficial, open-source (MIT) Apple Music app for Android TV / Google TV boxes and TVs (Xiaomi Mi Box, Chromecast with Google TV, NVIDIA Shield, Onn, TVs with Google TV). It runs Apple's official web player (music.apple.com) in a WebView and adds a remote-friendly (D-pad) interface on top: Home, Browse, Radio, Library, Search, album/playlist/artist pages, a calm Now Playing screen with lyrics and favorites. No DRM circumvention; requires an Apple Music subscription. Android 10+, Widevine.
+> Unofficial, open-source (MIT) Apple Music app for Android TV / Google TV boxes and TVs (Xiaomi Mi Box, Chromecast with Google TV, NVIDIA Shield, Onn, TVs with Google TV). It runs Apple's official web player (music.apple.com) in a WebView and adds a remote-friendly (D-pad) interface on top: Home, Browse, Radio, Library, Search, album/playlist/artist pages, a calm Now Playing screen with lyrics and favorites. Interface in English, German, Spanish, French, Brazilian Portuguese, Russian, Hindi, Japanese and Simplified Chinese. No DRM circumvention; requires an Apple Music subscription. Android 10+, Widevine.
 
 ## Install
 - APK (latest release): https://github.com/megarohas/apple-music-android-tv/releases/latest/download/amtv.apk
@@ -15,7 +15,13 @@
 - English README: https://github.com/megarohas/apple-music-android-tv/blob/release/README.md
 - Russian README: https://github.com/megarohas/apple-music-android-tv/blob/release/README.ru.md
 - French README: https://github.com/megarohas/apple-music-android-tv/blob/release/README.fr.md
-- Source map: MainActivity.java (WebView, keys, intents), res/raw/tv_core.js (focus engine, API, playback), tv_screens.js (screens), tv_player.js (Now Playing)
+- German README: https://github.com/megarohas/apple-music-android-tv/blob/release/README.de.md
+- Spanish README: https://github.com/megarohas/apple-music-android-tv/blob/release/README.es.md
+- Portuguese (Brazil) README: https://github.com/megarohas/apple-music-android-tv/blob/release/README.pt-BR.md
+- Hindi README: https://github.com/megarohas/apple-music-android-tv/blob/release/README.hi.md
+- Japanese README: https://github.com/megarohas/apple-music-android-tv/blob/release/README.ja.md
+- Simplified Chinese README: https://github.com/megarohas/apple-music-android-tv/blob/release/README.zh-CN.md
+- Source map: MainActivity.java (WebView, keys, intents), res/raw/tv_i18n.js (translations), res/raw/tv_core.js (focus engine, API, playback), tv_screens.js (screens), tv_player.js (Now Playing)
 
 ## Related
 - Voice remote that drives AMTV: https://github.com/megarohas/megarohas_tv_voice

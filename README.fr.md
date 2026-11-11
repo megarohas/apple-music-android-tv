@@ -10,7 +10,9 @@
 &nbsp;
 [![Licence : MIT](https://img.shields.io/badge/licence-MIT-333?style=for-the-badge)](LICENSE)
 
-[English version](README.md) · [Русская версия](README.ru.md) · [Installation en 5 minutes](#installation) · [La télécommande](#utilisation-avec-la-télécommande) · [Questions fréquentes](#questions-fréquentes) · [Fonctionnement](#fonctionnement)
+[English](README.md) · [Deutsch](README.de.md) · [Español](README.es.md) · **Français** · [Português](README.pt-BR.md) · [Русский](README.ru.md) · [हिन्दी](README.hi.md) · [日本語](README.ja.md) · [简体中文](README.zh-CN.md)
+
+[Installation en 5 minutes](#installation) · [La télécommande](#utilisation-avec-la-télécommande) · [Questions fréquentes](#questions-fréquentes) · [Fonctionnement](#fonctionnement)
 
 <img src="docs/screenshots/now_controls.jpg" width="820" alt="L’écran Lecture en cours d’AMTV sur une TV">
 
@@ -57,11 +59,11 @@ Elle est gratuite, open source et ne contient **aucun bidouillage** : elle fait 
 - 📚 **Bibliothèque** — ajouts récents, playlists, albums, artistes, morceaux.
 - 🔍 **Rechercher** — artistes, morceaux, albums, playlists et stations, avec l’historique de recherche.
 - 💿 **Pages d’album, de playlist et d’artiste** — Lire, Aléatoire, Ajouter à la bibliothèque ; les morceaux populaires sont repérés comme dans Apple Music.
-- 🎵 **Lecture en cours** — grande pochette, transitions douces entre les morceaux, fond teinté par la pochette ; les commandes se cachent toutes seules, **←/→ changent de morceau** quand elles sont cachées, et l’avance dans le morceau se fait avec un curseur fluide. Les titres longs défilent ; la pochette, le titre, l’artiste et l’horloge dérivent lentement, chacun sur son trajet, pour que rien ne marque l’écran. L’écran de veille de la TV ne se lance pas pendant la musique.
+- 🎵 **Lecture en cours** — grande pochette, transitions douces entre les morceaux, fond teinté par la pochette ; les commandes se cachent toutes seules, **←/→ changent de morceau** quand elles sont cachées, et l’avance dans le morceau se fait avec un curseur fluide. Les titres longs défilent ; la pochette, le titre, l’artiste et l’horloge dérivent lentement, tous ensemble, pour que rien ne marque l’écran. L’écran de veille de la TV ne se lance pas pendant la musique, et les barres de l’onglet Lecture en cours bougent tant qu’elle joue.
 - ⭐ **Favoris** — l’étoile du lecteur (la même que ⭐ dans Apple Music).
 - 📝 **Paroles** — les paroles d’Apple Music synchronisées mot à mot (activez-les avec le bouton paroles du lecteur).
 - 🗣️ **Commandes vocales et automatisation** — lancer une station ou changer de morceau depuis l’extérieur de l’appli (voir [Automatisation](#assistants-vocaux-et-automatisation)) ; marche avec la télécommande vocale open source [megarohas_tv_voice](https://github.com/megarohas/megarohas_tv_voice).
-- 🌐 **Interface en anglais, russe et français** — suit la langue de la TV, modifiable dans les Réglages.
+- 🌐 **Neuf langues d’interface** — English, Deutsch, Español, Français, Português, Русский, हिन्दी, 日本語 et 简体中文. Elle suit la langue de la TV ; Réglages → Langue les liste toutes, chacune sous son propre nom.
 - 🐢 **Rapide sur les petits boîtiers** — réglée sur une Xiaomi TV Box S (4×Cortex-A55, Mali-G31, 2 Go de RAM) : processeur à ≈ 0 % au repos, pas d’animations sans fin, rien de téléchargé en arrière-plan.
 - 🖱️ **Mode site web** — le site Apple Music complet avec un pointeur à l’écran, pour tout ce que l’interface TV ne fait pas encore.
 
@@ -158,7 +160,7 @@ AMTV ne contourne **pas** les DRM et n’extrait aucun jeton. La musique passe p
 
 <details><summary><b>Est-ce que ça marchera sur mon boîtier TV / ma Fire TV ?</b></summary>
 
-Elle est testée sur une **Xiaomi TV Box S (2e génération), Google TV, Android 14**. Elle devrait marcher sur tout appareil Android TV / Google TV sous Android 10+ avec Widevine (c’est le cas de presque tous les appareils certifiés : Chromecast avec Google TV, NVIDIA Shield, Mi Box, Onn, TV sous Google TV). La Fire TV n’a pas été testée : les retours sont les bienvenus.
+Elle est testée sur une **Xiaomi TV Box S (2e génération), Google TV, Android 14**. Elle devrait marcher sur tout appareil Android TV / Google TV sous Android 10+ avec Widevine (c’est le cas de presque tous les appareils certifiés : Chromecast avec Google TV, NVIDIA Shield, Mi Box, Onn, TV sous Google TV). On nous l’a aussi signalée fonctionnelle sur une TV Changhong (Android 11) et une Sony Bravia (Android TV 12). La Fire TV n’a pas été testée : les retours sont les bienvenus.
 </details>
 
 <details><summary><b>Lossless, Dolby Atmos, clips vidéo ?</b></summary>
@@ -208,7 +210,8 @@ Apple Music affiche le catalogue du pays de votre Apple ID. Avant la connexion, 
 
 - **Pas d’astuce DRM, pas d’extraction de jeton.** L’interface interroge l’API d’Apple par la session MusicKit déjà connectée de la page et lance la lecture avec MusicKit, comme le fait le site.
 - **La page d’Apple reste chargée mais cachée** (`display: none`) : c’est elle qui possède le lecteur. AMTV la garde sur une page sans pochette animée et refuse les requêtes qu’elle ne ferait que pour elle-même (vidéo des pochettes animées, ses propres vignettes, statistiques) : sur un boîtier lent, c’est la différence entre une station qui démarre en 20 s et en 4 s.
-- **Faite pour les GPU modestes** — pas de filtres de flou ni d’animations sans fin ; le fond de Lecture en cours est un canvas flouté de 64×36 peint une fois par morceau puis étiré ; les paroles avancent sur des minuteurs calés sur le mot suivant, pas sur une boucle par image ; la dérive, le titre qui défile et la barre de progression partagent un seul tic de 10 par seconde et bougent par des animations en pause, donc un pas ne force jamais la page à recréer ses calques ; la page cachée d’Apple n’a pas le droit d’animer quoi que ce soit.
+- **Faite pour les GPU modestes** — pas de filtres de flou ni d’animations sans fin ; le fond de Lecture en cours est un canvas flouté de 64×36 peint une fois par morceau puis étiré ; les paroles avancent sur des minuteurs calés sur le mot suivant, pas sur une boucle par image ; la dérive, le titre qui défile et la barre de progression partagent un seul tic de 10 par seconde et bougent par des animations en pause, donc un pas ne force jamais la page à recréer ses calques ; les barres de l’onglet Lecture en cours avancent quelques pas par seconde, seulement pendant la musique et quand la barre du haut est à l’écran, et s’arrêtent après une minute sans appui sur une touche ; la page cachée d’Apple n’a pas le droit d’animer quoi que ce soit.
+- **Temps exact** — MusicKit donne le temps à la seconde entière ; la barre de progression et le compteur suivent le temps exact du lecteur, donc ils ne reculent jamais.
 - **Navigation à la télécommande** — un petit moteur de focus : des rangées d’éléments focalisables, la mémoire de chaque rangée, des étagères qui glissent avec `transform`, le passage à l’onglet voisin depuis les bords, et un pointeur de souris pour le mode site web.
 
 Plan du code :
@@ -218,10 +221,12 @@ Plan du code :
 | `src/com/megarohas/amtv/MainActivity.java` | WebView, écran de démarrage, routage des touches, intents, filtre des requêtes |
 | `src/com/megarohas/amtv/Cursor.java` | le pointeur à l’écran du mode site web |
 | `res/raw/page.js` | petites corrections injectées dans la page d’Apple |
-| `res/raw/tv_core.js` | l’interface TV : moteur de focus, onglets, fonctions d’API, lecture, traductions |
+| `res/raw/tv_i18n.js` | les traductions de l’interface : une table par langue, indexée par les originaux russes |
+| `res/raw/tv_core.js` | l’interface TV : moteur de focus, onglets, fonctions d’API, lecture |
 | `res/raw/tv_screens.js` | Accueil, Explorer, Radio, Bibliothèque, Rechercher, Réglages, album / playlist / artiste |
 | `res/raw/tv_player.js` | Lecture en cours : fond, paroles, avance dans le morceau, favoris |
 | `res/raw/signin.js` | la page de connexion d’Apple adaptée à la télécommande : cadre de focus, flèches, OK ouvre le clavier (présentation seulement, il ne lit jamais ce que vous tapez) |
+| `res/values*/strings.xml` | les lignes de l’écran de démarrage dans chaque langue |
 | `res/raw/brand.js` | réglages de marque (icônes, police) : le seul fichier qu’une version personnalisée remplace |
 | `tools/cdp.mjs` | outil Chrome DevTools : inspecter et recharger à chaud l’interface sur une vraie TV |
 
@@ -229,7 +234,7 @@ Plan du code :
 
 Pas de Gradle : le Makefile appelle directement les outils du SDK Android ; une compilation prend quelques secondes.
 
-Prérequis : **SDK Android** (build-tools 36.0.0, plateforme `android-36`), **JDK 17**, `make`, `adb`.
+Prérequis : **SDK Android** (build-tools 36.0.0, plateforme `android-36`), **JDK 17 ou plus récent**, `make`, `adb`.
 
 ```bash
 git clone https://github.com/megarohas/apple-music-android-tv.git
@@ -247,17 +252,27 @@ Développer sur une vraie TV sans réinstaller :
 
 ```bash
 make devtools                                  # redirige les DevTools de la WebView vers localhost:9222
-node tools/cdp.mjs run res/raw/tv_core.js res/raw/tv_screens.js res/raw/tv_player.js
+node tools/cdp.mjs run res/raw/tv_i18n.js res/raw/tv_core.js res/raw/tv_screens.js res/raw/tv_player.js
 node tools/cdp.mjs eval '__tv.boot()'          # interface rechargée à chaud
 node tools/cdp.mjs shot screen.png             # ou inspectez dans chrome://inspect
 ```
 
 Une marque personnalisée (vos icônes et votre police) va dans `res/raw/brand.js` et `assets/fonts/` : voir les commentaires de ce fichier.
 
+### Ajouter une langue
+
+1. `res/raw/tv_i18n.js` — copiez la table anglaise, traduisez les valeurs et ajoutez la langue à `LANGS` (son code et son nom dans la langue même).
+2. `res/values-<code>/strings.xml` — les sept lignes de l’écran de démarrage.
+3. `res/raw/signin.js` — la ligne d’aide pour la télécommande sur la page de connexion d’Apple.
+4. Si vous voulez, `README.<code>.md`, avec un lien dans la ligne des langues en tête de chaque README.
+
+Gardez des textes à peu près aussi longs que l’anglais : la barre du haut et le lecteur ont peu de place. Ensuite `make`, et passez par tous les onglets sur une TV.
+
 ## Remerciements
 
 - [**JObersi10/apple-music-tv**](https://github.com/JObersi10/apple-music-tv) — un client Apple Music natif pour Android TV, dont les recherches sur l’API web d’Apple (les adresses pour Accueil, Explorer, Radio, paroles, favoris) et les idées d’interface TV ont beaucoup aidé. Aucun code n’a été copié. Ce projet déchiffre lui-même les flux ; AMTV ne le fait volontairement pas et laisse le lecteur d’Apple s’occuper de la lecture.
 - [**Material Icons**](https://github.com/google/material-design-icons) (Apache License 2.0) — la base du jeu d’icônes d’AMTV. Voir [NOTICE](NOTICE).
+- **Traductions** — le français par [NeoNathoon](https://github.com/NeoNathoon). Les autres langues n’ont pas encore été relues par des locuteurs natifs : les corrections sont bienvenues en pull request.
 - **Apple MusicKit on the Web** — le lecteur et l’API d’Apple avec lesquels AMTV communique.
 
 ## Mentions légales
