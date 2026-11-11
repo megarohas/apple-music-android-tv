@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="status_starting">正在启动…</string>
+    <string name="status_opening">正在打开 Apple Music…</string>
+    <string name="status_interface">正在载入界面…</string>
+    <string name="status_region">正在打开你所在地区的 Apple Music…</string>
+    <string name="status_play">正在开始播放…</string>
+    <string name="error_open">无法打开 %1$s</string>
+    <string name="error_retry">按 OK 重试</string>
+</resources>

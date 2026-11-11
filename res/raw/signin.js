@@ -12,6 +12,7 @@
     en: '↑ ↓  choose   ·   OK  type or press   ·   Back  cancel',
     fr: '↑ ↓  choisir   ·   OK  écrire ou valider   ·   Retour  annuler',
     ru: '↑ ↓  выбрать   ·   OK  ввести или нажать   ·   Назад  отмена',
+    zh: '↑ ↓  选择   ·   OK  输入或按下   ·   返回  取消',
   };
   const lang = (() => {
     const nl = String(window.__amtvLang || navigator.language || '').toLowerCase(), l = nl.split(/[-_]/)[0];
