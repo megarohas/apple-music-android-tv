@@ -483,10 +483,9 @@ img { display: block; }
 .tab .ic { font-size: 15px; }
 .tab.sel { color: #fff; font-weight: 600; }
 .tab.focus { background: #fff; color: #000; transform: scale(1.06); }
-.eq { display: none; gap: 2px; align-items: flex-end; height: 11px; }
-.eq i { width: 2px; background: #fa233b; border-radius: 1px; }
-.eq i:nth-child(1) { height: 6px; } .eq i:nth-child(2) { height: 11px; } .eq i:nth-child(3) { height: 8px; }
-.playing .eq { display: flex; }
+.eq { display: flex; gap: 2px; align-items: flex-end; height: 11px; }
+.eq i { width: 2px; height: 100%; border-radius: 1px; background: #8e8e93; transform-origin: 50% 100%; transition: background-color .3s; }
+.playing .eq i { background: #fa233b; }
 
 .stage { position: absolute; inset: 0; }
 .screen { position: absolute; inset: 64px 0 0 0; overflow: hidden; background: #000; }
@@ -582,7 +581,7 @@ h2 { font-size: 18px; font-weight: 600; margin: 0 48px 4px; color: #f2f2f5; whit
     if (cur && cur !== el) { cur.classList.remove('focus'); cur._onblur && cur._onblur(cur); }
     cur = el;
     el.classList.add('focus');
-    nav.classList.toggle('has-focus', inNav(el));
+    if (nav.classList.contains('has-focus') !== inNav(el)) { nav.classList.toggle('has-focus', inNav(el)); eqStep(); }
     const row = rowOf(el);
     if (row) { row._mem = el; ensureX(row, el); }
     const s = active();
@@ -741,6 +740,7 @@ h2 { font-size: 18px; font-weight: 600; margin: 0 48px 4px; color: #f2f2f5; whit
     } else nav.classList.toggle('ghost', !!s.ghostNav);
     if (focusIt) T.focus(s.focusEl && visible(s.focusEl) ? s.focusEl : first(s) || tabEls[tab]);
     s.onshow && s.onshow();
+    eqStep();
   }
 
   // A builder finished rendering: take focus if this screen is up and focus is nowhere useful.
@@ -829,6 +829,8 @@ h2 { font-size: 18px; font-weight: 600; margin: 0 48px 4px; color: #f2f2f5; whit
 
   T.key = function (k) {
     try {
+      lastKey = Date.now();
+      if (!eqLive) eqStep();
       if (!T.visible) return false;
       const s = active();
       if (s && s.onkey && s.onkey(k)) return true;            // e.g. Now Playing waking its controls
@@ -1016,6 +1018,34 @@ h2 { font-size: 18px; font-weight: 600; margin: 0 48px 4px; color: #f2f2f5; whit
     finally { T.busy(false, el); }
   };
 
+  // The bars on the Now Playing tab: grey and still unless music plays; then pink, and moving while
+  // anyone may be looking: eight steps a second, only while the top bar is on screen and a key was
+  // pressed in the last minute (music can play for hours with nobody at the TV). Each bar is a paused
+  // animation whose clock is set (see mover in tv_player.js): no restyle of the page per step.
+  const EQ_REST = [.55, 1, .73], EQ_HZ = [[1.31, .47], [.97, 1.61], [1.73, .59]];
+  const eqBars = [...tabEls.now.querySelectorAll('.eq i')].map((el) => {
+    const an = el.animate([{ transform: 'scaleY(.2)' }, { transform: 'scaleY(1)' }], { duration: 1000, fill: 'both' });
+    an.pause();
+    return (v) => { an.currentTime = (v - .2) / .8 * 1000; };          // v: .2…1 of the full height
+  });
+  eqBars.forEach((set, i) => set(EQ_REST[i]));
+  let eqTimer = 0, eqLive = false, lastKey = Date.now();
+  function eqStep() {
+    clearTimeout(eqTimer);
+    const mk = T.mk();
+    const live = !!mk && mk.playbackState === 2 && T.visible && !tabEls.now.hidden && document.visibilityState !== 'hidden'
+      && (!nav.classList.contains('ghost') || nav.classList.contains('has-focus')) && Date.now() - lastKey < 60000;
+    if (live) {
+      const t = performance.now() / 1000;
+      eqBars.forEach((set, i) => set(.6 + .2 * Math.sin(2 * Math.PI * EQ_HZ[i][0] * t + i * 2.1) + .2 * Math.sin(2 * Math.PI * EQ_HZ[i][1] * t + i)));
+      eqTimer = setTimeout(eqStep, 125);
+    } else if (eqLive) eqBars.forEach((set, i) => set(EQ_REST[i]));
+    eqLive = live;
+  }
+  const onVisibility = () => eqStep();
+  document.addEventListener('visibilitychange', onVisibility);
+  listeners.push(() => { document.removeEventListener('visibilitychange', onVisibility); clearTimeout(eqTimer); });
+
   // Now-playing marker on the tab; the tab itself stays out of the bar until music first plays.
   let played = false, awake = null;
   function onState() {
@@ -1026,6 +1056,7 @@ h2 { font-size: 18px; font-weight: 600; margin: 0 48px 4px; color: #f2f2f5; whit
     if (on !== awake) { awake = on; try { native.playing && native.playing(on); } catch (e) {} }
     if (!played && mk && mk.playbackState === 2) played = true;
     tabEls.now.hidden = !played && tab !== 'now';
+    eqStep();
   }
   T.on = function (ev, fn, s) {
     const mk = T.mk();
@@ -1120,6 +1151,7 @@ h2 { font-size: 18px; font-weight: 600; margin: 0 48px 4px; color: #f2f2f5; whit
     T.visible = false;
     tvMode(false);
     native.mode('site');
+    eqStep();
   };
   T.site = () => T.hide();                                  // the cursor + Apple's own page
 
