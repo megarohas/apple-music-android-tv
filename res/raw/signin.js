@@ -11,6 +11,7 @@
   const HINTS = {
     en: '↑ ↓  choose   ·   OK  type or press   ·   Back  cancel',
     de: '↑ ↓  auswählen   ·   OK  eingeben oder drücken   ·   Zurück  abbrechen',
+    es: '↑ ↓  elegir   ·   OK  escribir o presionar   ·   Atrás  cancelar',
     fr: '↑ ↓  choisir   ·   OK  écrire ou valider   ·   Retour  annuler',
     pt: '↑ ↓  escolher   ·   OK  digitar ou pressionar   ·   Voltar  cancelar',
     ru: '↑ ↓  выбрать   ·   OK  ввести или нажать   ·   Назад  отмена',
