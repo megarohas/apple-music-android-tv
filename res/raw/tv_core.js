@@ -479,9 +479,12 @@ img { display: block; }
 .nav.ghost:not(:focus-within):not(.has-focus) { opacity: 0; }
 .pill { display: flex; gap: 10px; padding: 6px 10px; border-radius: 999px; background: #1c1c1e; }
 .tab { padding: 8px 18px; border-radius: 999px; font-size: 13px; font-weight: 500; color: #9a9a9a; white-space: nowrap;
-  display: flex; align-items: center; gap: 6px; transition: background-color .15s, color .15s, transform .15s; }
+  display: flex; align-items: center; gap: 6px; transition: background-color .15s, color .15s, transform .15s, font-weight .25s; }
 .tab .ic { font-size: 15px; }
 .tab.sel { color: #fff; font-weight: 600; }
+/* A label is as wide as its bold self, so turning bold (a variable font eases into it) moves nothing. */
+.tab .lb { display: inline-flex; flex-direction: column; align-items: center; }
+.tab .lb::after { content: attr(data-t); font-weight: 600; height: 0; overflow: hidden; visibility: hidden; }
 .tab.focus { background: #fff; color: #000; transform: scale(1.06); }
 .eq { display: flex; gap: 2px; align-items: flex-end; height: 11px; }
 .eq i { width: 2px; height: 100%; border-radius: 1px; background: #8e8e93; transform-origin: 50% 100%; transition: background-color .3s; }
@@ -694,7 +697,8 @@ h2 { font-size: 18px; font-weight: 600; margin: 0 48px 4px; color: #f2f2f5; whit
       clearTimeout(tabTimer);
       tabTimer = setTimeout(() => { if (cur === t && id !== tab) T.tab(id); }, 500);
     } },
-      icon ? T.icon(icon) : null, id === 'now' ? h('span', 'eq', h('i'), h('i'), h('i')) : null, label || null);
+      icon ? T.icon(icon) : null, id === 'now' ? h('span', 'eq', h('i'), h('i'), h('i')) : null,
+      label ? h('span', { class: 'lb', 'data-t': label }, label) : null);
     tabEls[id] = t;
     pill.append(t);
   }
